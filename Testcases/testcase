@@ -1,0 +1,136 @@
+//testcase 1
+// File: tests/cpp_test.cpp
+#include <iostream>
+#include <cassert>
+
+void test_basic_arithmetic() {
+    std::string code = R"(
+    #include <iostream>
+    int main() {
+        std::cout << 2 + 3 << std::endl;
+        return 0;
+    }
+    )";
+
+    std::string output = execute_cpp_code(code);
+    assert(output == "5\n");
+    std::cout << "Basic arithmetic test passed." << std::endl;
+}
+
+int main() {
+    test_basic_arithmetic();
+    return 0;
+}
+
+//testcase 2
+// File: tests/cpp_test.cpp
+#include <iostream>
+#include <cassert>
+
+void test_string_manipulation() {
+    std::string code = R"(
+    #include <iostream>
+    #include <string>
+    int main() {
+        std::string greeting = "Hello, ";
+        std::string name = "world!";
+        std::cout << greeting + name << std::endl;
+        return 0;
+    }
+    )";
+
+    std::string output = execute_cpp_code(code);
+    assert(output == "Hello, world!\n");
+    std::cout << "String manipulation test passed." << std::endl;
+}
+
+int main() {
+    test_string_manipulation();
+    return 0;
+}
+//testcase 3
+// File: tests/cpp_test.cpp
+#include <iostream>
+#include <cassert>
+
+void test_division_by_zero() {
+    std::string code = R"(
+    #include <iostream>
+    int main() {
+        int a = 10;
+        int b = 0;
+        std::cout << a / b << std::endl;
+        return 0;
+    }
+    )";
+
+    std::string output = execute_cpp_code(code);
+    assert(output == "Division by zero error\n"); // Assuming the code judge handles this error appropriately
+    std::cout << "Division by zero test passed." << std::endl;
+}
+
+int main() {
+    test_division_by_zero();
+    return 0;
+}
+//testcase 4
+// File: tests/cpp_test.cpp
+#include <iostream>
+#include <cassert>
+
+void test_loop_execution() {
+    std::string code = R"(
+    #include <iostream>
+    int main() {
+        int sum = 0;
+        for(int i = 1; i <= 5; ++i) {
+            sum += i;
+        }
+        std::cout << sum << std::endl;
+        return 0;
+    }
+    )";
+
+    std::string output = execute_cpp_code(code);
+    assert(output == "15\n");
+    std::cout << "Loop execution test passed." << std::endl;
+}
+
+int main() {
+    test_loop_execution();
+    return 0;
+}
+//testcase 5
+#include <string>
+#include <cstdlib>
+
+std::string execute_cpp_code(const std::string& code) {
+    // Mock implementation to simulate code execution
+    // In your actual project, this function should compile and run the code and return the output
+
+    // Save code to a temporary file
+    std::ofstream temp_file("temp_code.cpp");
+    temp_file << code;
+    temp_file.close();
+
+    // Compile the code
+    std::system("g++ temp_code.cpp -o temp_code.out");
+
+    // Execute the compiled code and capture the output
+    std::string output;
+    char buffer[128];
+    FILE* pipe = popen("./temp_code.out", "r");
+    if (!pipe) {
+        return "Execution error";
+    }
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        output += buffer;
+    }
+    pclose(pipe);
+
+    // Clean up temporary files
+    std::remove("temp_code.cpp");
+    std::remove("temp_code.out");
+
+    return output;
+}
